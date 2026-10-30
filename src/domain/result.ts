@@ -4,6 +4,8 @@ export type DomainError =
   | "valor_aceito_invalido"
   | "categoria_invalida"
   | "recibo_invalido"
+  | "foto_invalida"
+  | "observacao_invalida"
   | "retorno_rpc_invalido";
 
 export type Ok<T> = { ok: true; value: T };

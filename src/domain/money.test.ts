@@ -1,11 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { decideReview, parsePositiveCents } from "./money";
+import { decideReview, parsePositiveCents, parseReaisToCents } from "./money";
 
 test("centavos positivos aceitam inteiro maior que zero", () => {
   const parsed = parsePositiveCents(1500);
   assert.equal(parsed.ok, true);
   if (parsed.ok) assert.equal(parsed.value, 1500);
+});
+
+test("reais com ate duas casas viram centavos", () => {
+  assert.deepEqual(parseReaisToCents("10,50"), { ok: true, value: 1050 });
+  assert.deepEqual(parseReaisToCents("10.5"), { ok: true, value: 1050 });
+  assert.deepEqual(parseReaisToCents("10.505"), { ok: false, error: "centavos_invalidos" });
 });
 
 test("centavos rejeitam fracao, texto e zero", () => {

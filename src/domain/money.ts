@@ -5,6 +5,15 @@ declare const centsBrand: unique symbol;
 /** Inteiro em centavos. O saldo da subconta não é calculado aqui. */
 export type Cents = number & { readonly [centsBrand]: true };
 
+export function parseReaisToCents(raw: unknown): Result<Cents> {
+  if (typeof raw !== "string") return err("centavos_invalidos");
+  const normalized = raw.trim().replace(",", ".");
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return err("centavos_invalidos");
+  const [whole, frac = ""] = normalized.split(".");
+  const cents = Number(whole) * 100 + Number(frac.padEnd(2, "0"));
+  return parsePositiveCents(cents);
+}
+
 export function parsePositiveCents(value: unknown): Result<Cents> {
   if (!isIntegerCents(value)) return err("centavos_invalidos");
   if (value <= 0) return err("valor_nao_positivo");
