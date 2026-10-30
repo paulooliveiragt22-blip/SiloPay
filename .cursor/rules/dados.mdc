@@ -1,0 +1,18 @@
+---
+description: Leitura em view, mutação em RPC, sessão do usuário. Service role só no webhook.
+alwaysApply: true
+---
+
+# Dados
+
+Leitura: só `v_minha_subconta`, `v_meu_extrato`, `v_fila_comprovantes`, `v_subconta_funcionario`.
+
+Mutação: só RPC (`criar_empresa`, `cadastrar_funcionario`, `vincular_funcionario`, `submit_receipt`, `review_receipt`, e as de Pix quando existirem). Sem `.from('companies').insert` e sem update em `ledger_entries`.
+
+Cliente da sessão (`createServerClient` / `createBrowserClient`) nas páginas e actions. `createBrowserClient` só no login e no upload da foto.
+
+A chave secreta do Supabase existe só no webhook do gateway. `payment_accounts` não tem grant para `authenticated` nem `anon`. A chave de API e o segredo do webhook saem cifrados, só no adaptador.
+
+`company_id` e `employee_id` de permissão vêm do vínculo no banco. Corpo de formulário não prova papel.
+
+Antes de SQL remoto: confirmar que a URL é `https://rbgrdujuuriabpekltis.supabase.co`. Outro projeto está fora.

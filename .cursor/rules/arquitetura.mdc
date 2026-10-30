@@ -1,0 +1,22 @@
+---
+description: Camadas, imports e stack do SiloPay. Vale em qualquer implementação.
+alwaysApply: true
+---
+
+# Arquitetura
+
+A árvore aprovada está em `docs/arquitetura-next.md`. Não abrir uma segunda casa (`lib/`, `src/pro/`, `src/application/`, `src/infrastructure/`).
+
+| Camada | Pasta | Pode | Não pode |
+|---|---|---|---|
+| Domínio | `src/domain` | centavos, categoria, portas, caso de uso | `next`, Supabase, HTTP, React |
+| Dados | `src/data` | `domain` e SDKs | `app`, componente, `next/navigation` |
+| Apresentação | `src/presentation`, `src/app` | caso de uso já montado | cliente Supabase, query, chave |
+
+`src/proxy.ts` só renova o cookie e manda quem não logou para `/login`. Papel e dinheiro são conferidos de novo na Server Action (`forbidden()` de `next/navigation`) e na RPC.
+
+O saldo sai da view. O TypeScript não reimplementa a fórmula. O Flutter não importa `src/domain`.
+
+Stack, quando o app existir: Next.js 16 (App Router), Node 24.x, `@supabase/ssr` atual, Tailwind v4, shadcn `base-nova`. Sem `middleware.ts`, sem `@supabase/auth-helpers-nextjs`, sem `tailwind.config.js`.
+
+HTTP de fora (gateway) usa timeout (`AbortSignal.timeout`). `catch` recebe `unknown`. Id externo de webhook é `text`, nunca UUID forçado.

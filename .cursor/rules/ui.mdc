@@ -1,0 +1,17 @@
+---
+description: UI shadcn base-nova, Radix, CVA e tokens. Sem tema paralelo.
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# UI
+
+Tema: shadcn `base-nova`, Tailwind v4, `baseColor` neutral, tokens em `src/app/globals.css`. Sem `tailwind.config.js` e sem tema `new-york`.
+
+Escuro segue o sistema: `ThemeProvider` com `attribute="class"`, `defaultTheme="system"`, `enableSystem`. `suppressHydrationWarning` no `html`.
+
+Diálogo, select, dropdown, switch, tabs e tooltip saem do Radix (via shadcn). Wrapper usa `asChild` e `forwardRef`. Variante nossa usa CVA. Classes passam por `cn()` (`clsx` + `tailwind-merge`).
+
+Cor de saldo, erro e sucesso usa token (`primary`, `destructive`, `muted`). Sem hex solto e sem largura mágica (`w-[324px]`). Texto longo trunca. Lista tem skeleton.
+
+Componente interativo não é `div` sem role, `tabIndex` e teclado. O componente estende os atributos nativos do elemento e exporta `VariantProps`.

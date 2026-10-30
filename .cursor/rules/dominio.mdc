@@ -1,0 +1,24 @@
+---
+description: Domínio puro, com teste sem banco. O saldo não é recalculado aqui.
+globs: src/domain/**/*.ts
+alwaysApply: false
+---
+
+# Domínio
+
+Função de `src/domain` não importa `next`, `@supabase`, React nem cliente HTTP. Recebe número e devolve resultado ou erro tipado.
+
+O que cabe aqui: centavos inteiros, valor maior que zero, valor aceito entre 0 e o informado, categoria da lista, pedido de transferência pela porta.
+
+O que não cabe: fórmula de saldo, nome de evento de gateway (`TRANSFER_DONE` e equivalentes), SQL.
+
+Cada função pura nova ganha teste ao lado, sem banco e sem rede. O teste importa o módulo do domínio, não o adaptador.
+
+```ts
+// ruim
+import { createClient } from "@supabase/supabase-js";
+export function saldo(rows: LedgerRow[]) { /* recalcula */ }
+
+// certo
+export function acceptedAmount(claimed: Cents, approved: Cents): ReviewResult { /* faixa */ }
+```

@@ -1,0 +1,33 @@
+---
+description: Checklist de migration do SiloPay. Não editar migration já aplicada.
+globs: supabase/migrations/**/*.sql
+alwaysApply: false
+---
+
+# Migrations
+
+Arquivo novo em `supabase/migrations/`. Não editar migration já aplicada no remoto.
+
+Projeto: **gestor** (`rbgrdujuuriabpekltis`). Confirmar a URL antes de aplicar. Aplicar com `supabase db push` no repo ligado a esse ref, ou pelo MCP depois dessa confirmação. Não commitar sem pedido explícito.
+
+Tabela nova em `public`:
+
+1. `enable row level security`
+2. `revoke all` de `public`, `anon` e `authenticated`
+3. Policy de `select` para `authenticated` no padrão das tabelas de negócio já existentes, sempre filtrando a empresa do `gestor_current_membership()`
+4. `payment_accounts` e qualquer coluna cifrada: sem grant para `authenticated` e policy que recusa o cliente
+5. Índice em `company_id` e `employee_id` usados na policy
+
+Função nova: `security definer` com `set search_path = public`. `revoke all` de `public` e `anon`. `grant execute` só para `authenticated` se a função conferir o papel por dentro. Função de trigger de lançamento fica sem execute para o cliente.
+
+Dinheiro: `idempotency_key` e id do gateway (`provider_transfer_id`, `provider_charge_id`) com unique de verdade. Sem secret no `.sql`.
+
+```sql
+-- ruim: policy só para service_role e a tela deixa de ter RLS
+create policy t_all on public.receipts for all using (auth.role() = 'service_role');
+
+-- certo: o JWT enxerga a linha; a escrita continua na RPC
+create policy receipts_select on public.receipts
+for select to authenticated
+using (company_id = (select m.company_id from public.gestor_current_membership() m));
+```

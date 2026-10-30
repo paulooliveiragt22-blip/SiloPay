@@ -1,0 +1,29 @@
+---
+description: Server Action confere sessão de novo e não fala com o banco direto.
+globs: src/presentation/**/*.ts,src/app/**/*.ts,src/app/**/*.tsx
+alwaysApply: false
+---
+
+# Apresentação
+
+Server Action é endpoint público. Em toda action:
+
+1. Ler a sessão no servidor. Ignorar user id vindo do formulário.
+2. Conferir o papel de novo. Papel errado: `forbidden()`.
+3. Validar o corpo (centavos, categoria) e chamar o caso de uso.
+4. Retornar situação e mensagem. Sem linha crua e sem chave.
+5. Depois de baixa ou comprovante, `revalidatePath` da fila e do extrato.
+
+`src/app` só compõe. Página lê view pela função de `src/data`, não por query solta. `src/proxy.ts` não autoriza papel.
+
+```ts
+// ruim
+const supabase = createClient(url, serviceKey);
+await supabase.from("receipts").update({ status: "aprovado" });
+
+// certo
+const session = await verifySession();
+if (session.role !== "admin") forbidden();
+await reviewReceipt(session, input);
+revalidatePath("/admin/comprovantes");
+```

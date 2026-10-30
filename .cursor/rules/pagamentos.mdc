@@ -1,0 +1,23 @@
+---
+description: Adaptador de gateway. O domínio pede a transferência; o provider traduz o evento.
+globs: src/data/payments/**/*.ts,src/app/api/payments/**/*.ts
+alwaysApply: false
+---
+
+# Gateway
+
+Um provedor, uma pasta em `src/data/payments/<provider>/`. `gateway.ts` escolhe pelo `provider` da conta. A action não chama HTTP.
+
+O adaptador traduz o corpo do webhook para confirmação, falha ou cancelamento. Esse vocabulário entra no domínio. O nome do evento do provedor fica no adaptador.
+
+Idempotência pelo id que o gateway devolve (`provider_transfer_id` ou `provider_charge_id`). A referência enviada é o id da ordem. Falha e cancelamento não geram lançamento.
+
+`fetch` com `AbortSignal.timeout`. Não logar chave, ciphertext nem corpo cru com segredo. A rota do webhook confere o segredo da conta e grava com a chave secreta do Supabase. Sem cookie de usuário.
+
+```ts
+// ruim — evento do provedor vazando para o caso de uso
+if (body.event === "TRANSFER_DONE") await ledger.insert(...)
+
+// certo
+const outcome = adapter.normalize(body); // "confirmed" | "failed" | "cancelled"
+```

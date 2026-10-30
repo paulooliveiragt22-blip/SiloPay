@@ -1,0 +1,20 @@
+---
+description: Não inventar regra de dinheiro, papel ou gateway. business_rules.md decide.
+alwaysApply: true
+---
+
+# Negócio antes de código
+
+`docs/business_rules.md` é a regra. Se o pedido muda saldo, papel, baixa, Pix ou gateway e o arquivo não cobre o caso, pare e pergunte. Não escolha o default de mercado.
+
+Invariante comercial mora no Postgres (CHECK, trigger, RPC). O app orquestra e exibe. Não grave valor calculado só no TypeScript.
+
+Proibido sem decisão escrita:
+
+- lançamento em comprovante recusado ou ordem com falha
+- funcionário disparando Pix
+- coluna de saldo editável
+- nome de gateway em tabela, coluna, enum ou rota de domínio
+- mensalidade SaaS, subconta de funcionário no gateway, OCR, fazenda como cadastro
+
+Conflito técnico × produto: atualizar `docs/business_rules.md` na mesma entrega, com a decisão do usuário. Não deixar os dois comportamentos vivos “por enquanto”.
