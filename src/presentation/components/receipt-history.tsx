@@ -31,6 +31,39 @@ export function ReceiptHistory({ rows }: { rows: ComprovanteItem[] }) {
 
   return (
     <>
+      <ul className="flex flex-col gap-3 lg:hidden">
+        {rows.map((row) => (
+          <li key={row.receiptId}>
+            <article className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-sm">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">{row.employeeName}</p>
+                  <p className="truncate text-sm text-muted-foreground">{categoryLabel(row.category)}</p>
+                </div>
+                <ExpenseStatus tone={toneOfReceipt(row.status)}>
+                  {labelOfExtrato({ kind: "comprovante", receiptStatus: row.status })}
+                </ExpenseStatus>
+              </div>
+              <dl className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <dt className="text-muted-foreground">Informado</dt>
+                  <dd className="tabular-nums text-foreground">{formatCents(row.amountClaimedCents)}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Aceito</dt>
+                  <dd className="tabular-nums text-foreground">
+                    {row.amountApprovedCents === null ? "—" : formatCents(row.amountApprovedCents)}
+                  </dd>
+                </div>
+              </dl>
+              <Button type="button" variant="outline" size="sm" className="self-start" onClick={() => { setZoom(false); setOpenId(row.receiptId); }}>
+                Ver
+              </Button>
+            </article>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden lg:block">
       <Table>
         <caption className="sr-only">Histórico de comprovantes</caption>
         <TableHeader>
@@ -66,6 +99,7 @@ export function ReceiptHistory({ rows }: { rows: ComprovanteItem[] }) {
           ))}
         </TableBody>
       </Table>
+      </div>
 
       <Dialog
         open={current !== null}

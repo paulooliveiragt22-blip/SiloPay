@@ -26,6 +26,29 @@ export function ReceiptQueue({ rows }: { rows: QueueRow[] }) {
 
   return (
     <>
+      <ul className="flex flex-col gap-3 lg:hidden">
+        {rows.map((row) => (
+          <li key={row.receiptId}>
+            <article className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-sm">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">{row.employeeName}</p>
+                  <p className="truncate text-sm text-muted-foreground">{row.categoryLabel}</p>
+                </div>
+                <ExpenseStatus tone="pending">Pendente de aprovação</ExpenseStatus>
+              </div>
+              <p className="line-clamp-2 text-sm text-muted-foreground">{row.placeNote ?? "Sem observação"}</p>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm font-medium tabular-nums text-foreground">{row.amountLabel}</p>
+                <Button type="button" variant="outline" size="sm" onClick={() => { setZoom(false); setOpenId(row.receiptId); }}>
+                  Ver e baixar
+                </Button>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden lg:block">
       <Table>
         <caption className="sr-only">Comprovantes em análise</caption>
         <TableHeader>
@@ -58,6 +81,7 @@ export function ReceiptQueue({ rows }: { rows: QueueRow[] }) {
           ))}
         </TableBody>
       </Table>
+      </div>
 
       <Dialog
         open={current !== null}

@@ -25,21 +25,22 @@
 }
 
 .dark {
-  --background: #18304f;
-  --foreground: #f1f5f9;
-  --card: color-mix(in srgb, #18304f 72%, white);
-  --muted: color-mix(in srgb, #18304f 58%, white);
-  --muted-foreground: #cbd5e1;
-  --border: color-mix(in srgb, white 18%, transparent);
-  --input: color-mix(in srgb, white 22%, transparent);
-  --primary: #f1f5f9;
-  --primary-foreground: #18304f;
+  color-scheme: dark;
+  --background: #1a1a1a;
+  --foreground: #f5f5f5;
+  --card: #242424;
+  --muted: #2c2c2c;
+  --muted-foreground: #c4c4c4;
+  --border: #3a3a3a;
+  --input: #2c2c2c;
+  --primary: #f5f5f5;
+  --primary-foreground: #1a1a1a;
   --secondary: #0b6a3a;
   --secondary-foreground: #ffffff;
   --accent: #00b4d8;
-  --accent-foreground: #18304f;
+  --accent-foreground: #1a1a1a;
   --destructive: #ef4444;
-  --ring: #f1f5f9;
+  --ring: #f5f5f5;
 }
 
 @theme inline {
@@ -64,6 +65,10 @@
   --color-status-rejected: var(--status-rejected);
   --radius-md: var(--radius);
   --font-wordmark: var(--font-handel), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--background);
 }
 
 body {

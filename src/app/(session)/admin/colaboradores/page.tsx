@@ -39,7 +39,7 @@ export default async function ColaboradoresPage({
             return (
               <li key={row.employeeId}>
                 <Card className={expenseRowClass(pending ? "pending" : "neutral", "shadow-sm")}>
-                  <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
+                  <CardHeader className="gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                     <div className="flex min-w-0 flex-col gap-1">
                       <CardTitle className="truncate">{row.employeeName ?? "Colaborador"}</CardTitle>
                       {row.cadastro?.jobTitle ? (

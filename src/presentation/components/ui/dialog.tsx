@@ -23,7 +23,7 @@ export const DialogContent = forwardRef<HTMLDivElement, ComponentProps<typeof Di
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed top-1/2 left-1/2 z-50 grid max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-lg",
+            "fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem)] w-[calc(100%-1rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg border border-border bg-card p-4 shadow-lg sm:w-[calc(100%-2rem)] sm:p-6",
             className,
           )}
           {...props}

@@ -4,7 +4,7 @@ import { cn } from "@/presentation/cn";
 export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
-      <table className={cn("w-full min-w-3xl border-collapse text-left text-sm", className)} {...props} />
+      <table className={cn("w-full border-collapse text-left text-sm", className)} {...props} />
     </div>
   );
 }

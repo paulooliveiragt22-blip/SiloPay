@@ -154,6 +154,14 @@ Grupos `(public)` e `(session)` não aparecem na URL.
 
 A fila abre a foto e a baixa num card modal. Cadastro novo entra por botão chip e abre outro card modal. Componente cliente no diálogo, no preview da foto e no formulário. O resto é Server Component.
 
+No celular e no tablet estreito, comprovante em análise e histórico viram cartão. A tabela volta a partir de `lg`. O painel do admin usa barra inferior no celular e no tablet, com fundo `primary` e só letras e ícones em `secondary`. A coluna lateral começa em `lg`, com ícone em cada seção, e pode ser recolhida. Diálogo, campo e botão respeitam a área segura e o toque.
+
+## Aplicativo instalável
+
+`src/app/manifest.ts` descreve o SiloPay para a tela inicial: nome, `standalone`, cor `#18304F` e ícones em `public/icons`. `public/sw.js` é o service worker. Ele guarda a página `public/offline.html`, os ícones e, fora do localhost, os arquivos com hash em `/_next/static`. Página, saldo, fila e extrato continuam na rede. Sem rede, a navegação cai na página offline, que não mostra valor.
+
+O proxy não intercepta `/sw.js`, `/manifest.webmanifest` nem `/offline.html`. Sem isso, quem não está logado receberia o HTML do login no lugar do manifesto e o aplicativo não instalaria.
+
 ## Tema
 
 O tema atual dessa stack é o **base-nova** do shadcn/ui, em cima de Tailwind CSS v4. A cor base é `neutral`. Os tokens são variáveis CSS em OKLCH, com claro e escuro. Não há `tailwind.config.js`.
@@ -175,7 +183,7 @@ Quando o app for criado, `components.json` fica assim:
 
 `globals.css` importa `tailwindcss` e `shadcn/tailwind.css`, declara `@custom-variant dark (&:is(.dark *))` e mapeia as cores em `@theme inline`. O raio padrão é `0.625rem`. O scaffold completo sai do `npx shadcn@latest init`, não de uma cópia manual de tutorial antigo.
 
-O escuro segue o sistema. O layout raiz usa `suppressHydrationWarning` no `html` e um `ThemeProvider` com `attribute="class"`, `defaultTheme="system"`, `enableSystem` e `disableTransitionOnChange`. Esse provider é o único cliente obrigatório em volta da árvore.
+O escuro começa no sistema. O botão de tema, no topo e na coluna lateral, troca para claro ou escuro e guarda a escolha. O layout raiz usa `suppressHydrationWarning` no `html` e um `ThemeProvider` com `attribute="class"`, `defaultTheme="system"`, `enableSystem` e `disableTransitionOnChange`. Esse provider é o único cliente obrigatório em volta da árvore.
 
 Botão, diálogo, select e aba vêm do shadcn, que por baixo usa Radix. Variante de componente nosso usa CVA. Cor de saldo, erro e sucesso usa os tokens (`primary`, `destructive`, `muted`), não hex solto na tela.
 

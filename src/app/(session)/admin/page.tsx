@@ -17,7 +17,7 @@ export default async function AdminHomePage() {
       <Card className="flex flex-wrap items-center justify-between gap-3 border-t-4 border-t-primary p-4">
         <div>
           <p className="text-sm text-foreground">Saldo da empresa</p>
-          <p className="mt-1 text-2xl text-foreground">{formatCents(saldoEmpresa.saldoCents)}</p>
+          <p className="mt-1 text-xl text-foreground tabular-nums sm:text-2xl">{formatCents(saldoEmpresa.saldoCents)}</p>
           <p className="mt-1 text-sm text-muted-foreground">O valor enviado ao colaborador sai daqui.</p>
         </div>
         <ChipLink href="/admin/pagamentos?adicionar=1">Adicionar saldo</ChipLink>

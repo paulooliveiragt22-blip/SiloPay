@@ -1,4 +1,5 @@
 import { LoginForm } from "@/presentation/components/login-form";
+import { ThemeToggle } from "@/presentation/components/theme-toggle";
 import { Wordmark } from "@/presentation/components/wordmark";
 import { Card, CardContent, CardDescription, CardHeader } from "@/presentation/components/ui/card";
 
@@ -11,12 +12,15 @@ export default async function LoginPage({
   const expired = query.motivo === "senha-vencida";
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4">
+    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <Card>
         <CardHeader>
-          <h1 className="text-2xl">
-            <Wordmark />
-          </h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="text-2xl">
+              <Wordmark />
+            </h1>
+            <ThemeToggle />
+          </div>
           <CardDescription>Entre com o e-mail da empresa ou do colaborador. O acesso segue o vínculo da conta.</CardDescription>
         </CardHeader>
         <CardContent>

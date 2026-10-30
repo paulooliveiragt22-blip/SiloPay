@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#18304F" />
+    <title>SiloPay</title>
+    <style>
+      html { box-sizing: border-box; }
+      *, *::before, *::after { box-sizing: inherit; }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: max(1.5rem, env(safe-area-inset-top)) 1rem max(1.5rem, env(safe-area-inset-bottom));
+        background: #f1f5f9;
+        color: #1a365d;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      main {
+        width: min(100%, 24rem);
+        display: grid;
+        gap: 0.75rem;
+        padding: 1.5rem;
+        border: 1px solid #d6dee8;
+        border-radius: 0.625rem;
+        background: #fff;
+      }
+      h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.01em; }
+      p { margin: 0; line-height: 1.5; }
+      button {
+        justify-self: start;
+        min-height: 2.75rem;
+        padding: 0 1rem;
+        border: 0;
+        border-radius: 0.625rem;
+        background: #1a365d;
+        color: #fff;
+        font: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>SiloPay</h1>
+      <p>Sem conexão. O saldo e os comprovantes não ficam guardados neste aparelho.</p>
+      <button type="button" onclick="location.reload()">Tentar de novo</button>
+    </main>
+  </body>
+</html>

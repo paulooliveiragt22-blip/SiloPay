@@ -39,7 +39,7 @@ export default async function PagamentosPage({
         {cards.map((card) => (
           <Card key={card.key} className={cn("border-t-4 p-4", card.tone)}>
             <dt className="text-sm text-foreground">{card.label}</dt>
-            <dd className="mt-1 text-2xl text-foreground">{formatCents(saldo[card.key])}</dd>
+            <dd className="mt-1 text-xl text-foreground tabular-nums sm:text-2xl">{formatCents(saldo[card.key])}</dd>
           </Card>
         ))}
       </dl>
