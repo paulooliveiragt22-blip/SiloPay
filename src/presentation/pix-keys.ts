@@ -12,3 +12,7 @@ export const pixKeyOptions = PIX_KEY_TYPES.map((value) => ({
   value,
   label: labels[value],
 }));
+
+export function pixKeyLabel(value: string): string {
+  return PIX_KEY_TYPES.some((type) => type === value) ? labels[value as PixKeyType] : value;
+}

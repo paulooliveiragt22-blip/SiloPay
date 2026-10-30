@@ -1,6 +1,7 @@
 import { forbidden } from "next/navigation";
 import { readExtrato, readMinhaSubconta } from "@/data/supabase/reads";
 import { ExtratoList } from "@/presentation/components/extrato-list";
+import { ReceiptOutbox } from "@/presentation/components/receipt-outbox-list";
 import { ReceiptCreateDialog } from "@/presentation/components/receipt-create-dialog";
 import { PageStack, SaldoGrid } from "@/presentation/components/saldo";
 import { verifySession } from "@/presentation/session";
@@ -34,6 +35,7 @@ export default async function CampoPage({
         companyId={membership.companyId}
         employeeId={membership.employeeId}
       />
+      <ReceiptOutbox companyId={membership.companyId} employeeId={membership.employeeId} />
       {saldo ? (
         <SaldoGrid saldo={saldo} />
       ) : (

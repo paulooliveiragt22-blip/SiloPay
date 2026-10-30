@@ -5,9 +5,9 @@ alwaysApply: true
 
 # Dados
 
-Leitura: só `v_minha_subconta`, `v_meu_extrato`, `v_fila_comprovantes`, `v_comprovantes`, `v_subconta_funcionario`, `v_minha_empresa`, `v_extrato_funcionario`, `v_saldo_empresa`, `v_extrato_empresa`, `v_conta_pagamento`, `v_destino_pix`, `v_meu_acesso`.
+Leitura: só `v_minha_subconta`, `v_meu_extrato`, `v_fila_comprovantes`, `v_comprovantes`, `v_subconta_funcionario`, `v_minha_empresa`, `v_extrato_funcionario`, `v_saldo_empresa`, `v_extrato_empresa`, `v_conta_pagamento`, `v_destino_pix`, `v_meu_acesso`, `v_eventos_empresa`.
 
-Mutação: só RPC (`criar_empresa`, `cadastrar_funcionario_com_acesso`, `abrir_acesso_colaborador`, `renovar_senha_colaborador`, `confirmar_senha_inicial`, `encerrar_acesso_vencido`, `submit_receipt`, `corrigir_comprovante`, `excluir_comprovante`, `review_receipt`, `adicionar_saldo_empresa`, `enviar_saldo_colaborador`, `devolver_sobra`). `cadastrar_funcionario`, `vincular_funcionario` e `vincular_funcionario_por_email` não entram no app. `registrar_adiantamento_teste` está aposentada. Sem `.from('companies').insert` e sem update em `ledger_entries` nem em `company_cash_entries`.
+Mutação: só RPC (`criar_empresa`, `cadastrar_funcionario_com_acesso`, `atualizar_cadastro_colaborador`, `abrir_acesso_colaborador`, `renovar_senha_colaborador`, `confirmar_senha_inicial`, `encerrar_acesso_vencido`, `submit_receipt`, `corrigir_comprovante`, `excluir_comprovante`, `review_receipt`, `adicionar_saldo_empresa`, `enviar_saldo_colaborador`, `devolver_sobra`). `cadastrar_funcionario`, `vincular_funcionario` e `vincular_funcionario_por_email` não entram no app. `registrar_adiantamento_teste` está aposentada. Sem `.from('companies').insert` e sem update em `ledger_entries` nem em `company_cash_entries`.
 
 Cliente da sessão (`createServerClient` / `createBrowserClient`) nas páginas e actions. `createBrowserClient` só no login e no upload da foto.
 

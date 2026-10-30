@@ -11,6 +11,7 @@ export type ContaPagamento = Tables<"v_conta_pagamento">;
 export type SaldoEmpresaLinha = Tables<"v_saldo_empresa">;
 export type ExtratoEmpresaLinha = Tables<"v_extrato_empresa">;
 export type MeuAcesso = Tables<"v_meu_acesso">;
+export type EventoEmpresa = Tables<"v_eventos_empresa">;
 
 type EnumCategory = Database["public"]["Enums"]["gestor_receipt_category"];
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { readExtratoFuncionario, readSaldoEmpresa, readSubcontas } from "@/data/supabase/reads";
+import { readEventos, readExtratoFuncionario, readSaldoEmpresa, readSubcontas } from "@/data/supabase/reads";
 import { BalanceNotice } from "@/presentation/components/balance-notice";
 import { EmployeeDialogs } from "@/presentation/components/employee-dialogs";
 import { ExpenseStatus, expenseRowClass } from "@/presentation/components/expense-status";
@@ -21,7 +21,7 @@ export default async function ColaboradoresPage({
   searchParams: Promise<{ cadastro?: string | string[]; id?: string | string[] }>;
 }) {
   const query = await searchParams;
-  const [rows, saldoEmpresa] = await Promise.all([readSubcontas(), readSaldoEmpresa()]);
+  const [rows, saldoEmpresa, events] = await Promise.all([readSubcontas(), readSaldoEmpresa(), readEventos()]);
   const creating = first(query.cadastro) === "novo";
   const viewingId = creating ? null : first(query.id);
   const extrato = viewingId ? await readExtratoFuncionario(viewingId) : [];
@@ -76,6 +76,7 @@ export default async function ColaboradoresPage({
         viewingId={viewingId}
         extrato={extrato}
         companySaldoCents={saldoEmpresa.saldoCents}
+        events={events}
       />
     </PageStack>
   );

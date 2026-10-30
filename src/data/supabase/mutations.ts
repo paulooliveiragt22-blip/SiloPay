@@ -270,6 +270,37 @@ export async function confirmarSenhaInicialRpc(): Promise<unknown> {
   return data;
 }
 
+export async function atualizarCadastroColaboradorRpc(input: {
+  employeeId: string;
+  jobTitle: string;
+  phone: string;
+  postalCode: string;
+  street: string;
+  streetNumber: string;
+  complement: string | null;
+  district: string;
+  city: string;
+  state: string;
+  hiredOn: string | null;
+}): Promise<unknown> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("atualizar_cadastro_colaborador", {
+    p_employee_id: input.employeeId,
+    p_job_title: input.jobTitle,
+    p_phone: input.phone,
+    p_postal_code: input.postalCode,
+    p_street: input.street,
+    p_street_number: input.streetNumber,
+    p_address_complement: input.complement,
+    p_district: input.district,
+    p_city: input.city,
+    p_state: input.state,
+    p_hired_on: input.hiredOn,
+  });
+  if (error) throw error;
+  return data;
+}
+
 export async function encerrarAcessoVencidoRpc(): Promise<unknown> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("encerrar_acesso_vencido");

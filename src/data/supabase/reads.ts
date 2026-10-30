@@ -1,5 +1,5 @@
 import "server-only";
-import type { ExtratoLinha, MinhaEmpresa, MinhaSubconta, SubcontaFuncionario, FilaComprovante, ComprovanteLinha, ContaPagamento, SaldoEmpresaLinha, ExtratoEmpresaLinha, MeuAcesso } from "./contract";
+import type { ExtratoLinha, MinhaEmpresa, MinhaSubconta, SubcontaFuncionario, FilaComprovante, ComprovanteLinha, ContaPagamento, SaldoEmpresaLinha, ExtratoEmpresaLinha, MeuAcesso, EventoEmpresa } from "./contract";
 import { createClient } from "./server";
 import { signReceiptPhoto } from "./storage";
 
@@ -23,6 +23,11 @@ export type SaldoView = {
 };
 
 export type CadastroColaborador = {
+  name: string | null;
+  cpf: string | null;
+  email: string | null;
+  pixKeyType: string | null;
+  pixKey: string | null;
   jobTitle: string | null;
   phone: string | null;
   postalCode: string | null;
@@ -276,6 +281,11 @@ function toSaldo(
 
 function toCadastro(row: SubcontaFuncionario): CadastroColaborador {
   return {
+    name: row.employee_name,
+    cpf: row.cpf,
+    email: row.email,
+    pixKeyType: row.pix_key_type,
+    pixKey: row.pix_key,
     jobTitle: row.job_title,
     phone: row.phone,
     postalCode: row.postal_code,
@@ -402,6 +412,50 @@ export async function readMeuAcesso(): Promise<AcessoView | null> {
   const { data, error } = await supabase.from("v_meu_acesso").select("*").maybeSingle();
   if (error) throw error;
   return toAcesso(data);
+}
+
+export type EventoEmpresaView = {
+  id: string;
+  occurredAt: string;
+  kind: "colaborador_criado" | "senha_gerada" | "senha_trocada" | "senha_renovada" | "saldo_adicionado";
+  employeeId: string | null;
+  employeeName: string | null;
+  actorName: string;
+};
+
+const eventKinds: EventoEmpresaView["kind"][] = [
+  "colaborador_criado",
+  "senha_gerada",
+  "senha_trocada",
+  "senha_renovada",
+  "saldo_adicionado",
+];
+
+export async function readEventos(): Promise<EventoEmpresaView[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("v_eventos_empresa")
+    .select("*")
+    .order("occurred_at", { ascending: false })
+    .limit(40);
+  if (error) throw error;
+  return (data ?? []).flatMap((row) => {
+    const item = toEvento(row);
+    return item ? [item] : [];
+  });
+}
+
+function toEvento(row: EventoEmpresa): EventoEmpresaView | null {
+  if (!row.id || !row.occurred_at || !row.kind || !row.actor_name) return null;
+  if (!eventKinds.some((kind) => kind === row.kind)) return null;
+  return {
+    id: row.id,
+    occurredAt: row.occurred_at,
+    kind: row.kind as EventoEmpresaView["kind"],
+    employeeId: row.employee_id,
+    employeeName: row.employee_name,
+    actorName: row.actor_name,
+  };
 }
 
 function toAcesso(row: MeuAcesso | null): AcessoView | null {

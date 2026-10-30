@@ -105,7 +105,7 @@ O papel não mora num cookie. O proxy só sabe se há sessão. O layout `(sessio
 A página lê view com o cliente da sessão, então a RLS vale:
 
 - funcionário: `v_minha_subconta`, `v_meu_extrato`, `v_meu_acesso`
-- admin: `v_fila_comprovantes`, `v_comprovantes`, `v_subconta_funcionario`, `v_minha_empresa`, `v_extrato_funcionario`, `v_saldo_empresa`, `v_extrato_empresa`
+- admin: `v_fila_comprovantes`, `v_comprovantes`, `v_subconta_funcionario`, `v_minha_empresa`, `v_extrato_funcionario`, `v_saldo_empresa`, `v_extrato_empresa`, `v_eventos_empresa`
 
 A action de comprovante e a de baixa chamam a RPC com o mesmo cliente da sessão. O Postgres recusa o que o papel não pode. O Next.js recusa antes, para a tela não depender só do erro do banco.
 
@@ -117,7 +117,9 @@ Envio ao colaborador, neste ciclo, sem gateway:
 4. `devolver_sobra` recusa se passar do saldo da subconta. Se cabe, debita a subconta e credita a empresa na mesma transação.
 5. A baixa não devolve valor à empresa.
 
-Foto: bucket privado. O navegador sobe o arquivo pela política do Storage, na pasta da própria empresa e do próprio usuário. A action recebe o caminho, não o binário. A empresa vê a imagem por URL assinada, curta, gerada no servidor.
+Foto: bucket privado. O navegador sobe o arquivo pela política do Storage, na pasta da própria empresa e do próprio usuário. A action recebe o caminho, não o binário. A empresa vê a imagem por URL assinada, curta, gerada no servidor. Sem rede, o rascunho (foto, valor, categoria, observação e o caminho já escolhido) fica no IndexedDB deste aparelho e a página tenta de novo quando a rede volta. O service worker não guarda saldo nem a fila.
+
+`atualizar_cadastro_colaborador` grava cargo, telefone, endereço e admissão do colaborador da mesma empresa. `v_eventos_empresa` lista quem criou o colaborador, gerou ou renovou a senha temporária, trocou a senha, ou adicionou saldo. Sem valor e sem a senha. O texto da senha temporária não entra nesse registro. Ações anteriores à tabela não têm autor.
 
 Depois de uma baixa ou de um comprovante, `revalidatePath` da fila e do extrato. Essas telas usam cookie, então não são estáticas. `revalidateTag` no Next.js 16 pede o segundo argumento (perfil de cache); enquanto der para invalidar pelo path, fica no path.
 

@@ -19,9 +19,11 @@ Os dois papéis entram pelo navegador e pelo smartphone. A permissão não muda 
 
 Um usuário pertence a uma empresa. O primeiro usuário da empresa é admin. Quem já foi aberto como colaborador não cria empresa.
 
-O colaborador não cria a própria conta. No cadastro, a empresa informa o e-mail que ele passou, o cargo, o telefone com DDD e o endereço. O CEP de 8 dígitos preenche rua, bairro, cidade e UF. Número e complemento ficam com a empresa. A data de admissão é opcional. Cadastro antigo, sem esses dados, continua válido. O sistema gera a senha temporária, mostra uma vez para entregar em mãos e não grava esse texto. Ela vale 24 horas. No primeiro acesso o colaborador só troca a senha; sem essa troca, saldo e comprovante não abrem. A senha nova é definida na sessão dele. A empresa não lê essa senha. Se o acesso se perder, a empresa gera outra senha temporária: a anterior deixa de valer e as sessões abertas caem.
+O colaborador não cria a própria conta. No cadastro, a empresa informa o e-mail que ele passou, o cargo, o telefone com DDD e o endereço. O CEP de 8 dígitos preenche rua, bairro, cidade e UF. Número e complemento ficam com a empresa. A data de admissão é opcional. Cadastro antigo, sem esses dados, continua válido. A empresa completa ou corrige cargo, telefone, endereço e admissão depois, na ficha. CPF, e-mail e Pix não mudam nessa tela. A aba Dados mostra o que já está gravado: nome, CPF, Pix e, quando existirem, e-mail, cargo, telefone, endereço e admissão. Campo vazio não aparece. O sistema gera a senha temporária, mostra uma vez para entregar em mãos e não grava esse texto. Ela vale 24 horas. No primeiro acesso o colaborador só troca a senha; sem essa troca, saldo e comprovante não abrem. A senha nova é definida na sessão dele. A empresa não lê essa senha. Se o acesso se perder, a empresa gera outra senha temporária: a anterior deixa de valer e as sessões abertas caem.
 
 O login pede e-mail e senha. O papel sai do vínculo no banco: admin vai para a área da empresa, colaborador para a subconta. A tela de entrar não escolhe papel.
+
+A empresa vê quem fez: colaborador criado, senha temporária gerada, senha trocada, senha temporária renovada e saldo adicionado. O registro guarda quem, quando e o colaborador alvo. Não guarda valor e não guarda senha. O que aconteceu antes desse registro não tem autor.
 
 ## Saldo da subconta
 
@@ -75,7 +77,7 @@ Categorias: combustível, alimentação, pedágio, hospedagem, manutenção, ins
 - Valor informado maior que zero.
 - Foto obrigatória.
 - Enquanto está em análise, o funcionário pode corrigir valor, categoria, observação e foto, ou excluir o comprovante. Na edição, excluir a foto continua disponível e exige outra no lugar. Isso não mexe no saldo. Depois da baixa, não edita e não apaga.
-- No smartphone, a foto pode ficar na fila do aparelho e subir quando houver rede. No navegador, o envio é online.
+- Se não houver rede no envio, a foto, o valor, a categoria e a observação ficam na fila deste aparelho e sobem quando a rede voltar. A fila não grava saldo. Com rede, o envio segue na hora. O mesmo caminho vale de novo sem criar um segundo comprovante.
 - Estado inicial: em análise.
 
 Fazenda, talhão ou placa são texto opcional neste ciclo. Cadastro próprio desses centros fica para depois.

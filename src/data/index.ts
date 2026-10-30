@@ -1,5 +1,7 @@
 import "server-only";
 import type { Cents } from "@/domain/money";
+import { ok, type Result } from "@/domain/result";
+import { parseEmployeeProfile } from "@/domain/address";
 import { parsePaymentKind } from "@/domain/payment";
 import { parseAdiantamentoTeste, parseAdicionarSaldo, parseContaPagamento, parseCriarEmpresa, parseDevolverSobra, parseEnviarSaldo, parseUuid } from "@/domain/rpc";
 import { requestTransfer } from "@/domain/request-transfer";
@@ -23,6 +25,7 @@ import {
   registrarEnvioPixRpc,
   reviewReceiptRpc,
   submitReceiptRpc,
+  atualizarCadastroColaboradorRpc,
 } from "./supabase/mutations";
 
 const reviewPort = { reviewReceipt: reviewReceiptRpc };
@@ -147,6 +150,39 @@ export async function executeEnviarSaldo(input: {
     idempotencyKey: idempotencyKey.value,
   });
   return parseEnviarSaldo(raw);
+}
+
+export async function executeAtualizarCadastro(input: {
+  employeeId: unknown;
+  jobTitle: unknown;
+  phone: unknown;
+  postalCode: unknown;
+  street: unknown;
+  streetNumber: unknown;
+  complement: unknown;
+  district: unknown;
+  city: unknown;
+  state: unknown;
+  hiredOn: unknown;
+}): Promise<Result<string>> {
+  const employeeId = parseUuid(input.employeeId);
+  if (!employeeId.ok) return employeeId;
+  const profile = parseEmployeeProfile(input);
+  if (!profile.ok) return profile;
+  await atualizarCadastroColaboradorRpc({
+    employeeId: employeeId.value,
+    jobTitle: profile.value.jobTitle,
+    phone: profile.value.phone,
+    postalCode: profile.value.postalCode,
+    street: profile.value.street,
+    streetNumber: profile.value.streetNumber,
+    complement: profile.value.complement,
+    district: profile.value.district,
+    city: profile.value.city,
+    state: profile.value.state,
+    hiredOn: profile.value.hiredOn,
+  });
+  return ok(employeeId.value);
 }
 
 export function executeRequestTransfer(input: {

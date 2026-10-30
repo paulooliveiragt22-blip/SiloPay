@@ -598,6 +598,17 @@ export type Database = {
         }
         Relationships: []
       }
+      v_eventos_empresa: {
+        Row: {
+          id: string | null
+          occurred_at: string | null
+          kind: string | null
+          employee_id: string | null
+          employee_name: string | null
+          actor_name: string | null
+        }
+        Relationships: []
+      }
       v_minha_empresa: {
         Row: {
           company_id: string | null
@@ -654,6 +665,10 @@ export type Database = {
           state: string | null
           street: string | null
           street_number: string | null
+          cpf: string | null
+          pix_key_type: Database["public"]["Enums"]["gestor_pix_key_type"] | null
+          pix_key: string | null
+          email: string | null
         }
         Relationships: [
           {
@@ -688,6 +703,22 @@ export type Database = {
       }
       adicionar_saldo_empresa: {
         Args: { p_amount_cents: number; p_idempotency_key: string }
+        Returns: Json
+      }
+      atualizar_cadastro_colaborador: {
+        Args: {
+          p_employee_id: string
+          p_job_title: string
+          p_phone: string
+          p_postal_code: string
+          p_street: string
+          p_street_number: string
+          p_address_complement: string | null
+          p_district: string
+          p_city: string
+          p_state: string
+          p_hired_on: string | null
+        }
         Returns: Json
       }
       devolver_sobra: {
