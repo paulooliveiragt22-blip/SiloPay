@@ -1,10 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { criarEmpresaAction } from "@/presentation/actions/criar-empresa";
 import type { ActionResult } from "@/presentation/actions/review-receipt";
+import { Button } from "./ui/button";
+import { Field, FieldGroup } from "./ui/field";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 export function CreateCompanyForm() {
   const router = useRouter();
@@ -18,23 +21,25 @@ export function CreateCompanyForm() {
   }, [router, state]);
 
   return (
-    <form action={action} className="flex w-full max-w-sm flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm">
-        Nome
-        <input name="name" required className="h-9 rounded-md border border-input bg-card px-3" />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        CNPJ
-        <input name="cnpj" required inputMode="numeric" className="h-9 rounded-md border border-input bg-card px-3" />
-      </label>
-      <button
-        type="submit"
-        disabled={pending}
-        className="h-9 rounded-md bg-primary px-3 text-sm text-primary-foreground disabled:opacity-50"
-      >
-        {pending ? "Criando…" : "Criar empresa"}
-      </button>
-      {state && !state.ok ? <p className="text-sm text-destructive">{state.message}</p> : null}
+    <form action={action}>
+      <FieldGroup>
+        <Field>
+          <Label htmlFor="company-name">Nome</Label>
+          <Input id="company-name" name="name" required />
+        </Field>
+        <Field>
+          <Label htmlFor="company-cnpj">CNPJ</Label>
+          <Input id="company-cnpj" name="cnpj" required inputMode="numeric" />
+        </Field>
+        <Button type="submit" disabled={pending}>
+          {pending ? "Criando…" : "Criar empresa"}
+        </Button>
+        {state && !state.ok ? (
+          <p className="text-sm text-destructive" role="alert">
+            {state.message}
+          </p>
+        ) : null}
+      </FieldGroup>
     </form>
   );
 }

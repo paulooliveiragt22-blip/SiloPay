@@ -17,6 +17,7 @@
   --accent-foreground: #18304f;
   --brand: #18304f;
   --destructive: #ef4444;
+  --ring: #1a365d;
   --status-pending: #e5a93b;
   --status-approved: #2ee575;
   --status-rejected: #ef4444;
@@ -38,6 +39,7 @@
   --accent: #00b4d8;
   --accent-foreground: #18304f;
   --destructive: #ef4444;
+  --ring: #f1f5f9;
 }
 
 @theme inline {
@@ -56,6 +58,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-brand: var(--brand);
   --color-destructive: var(--destructive);
+  --color-ring: var(--ring);
   --color-status-pending: var(--status-pending);
   --color-status-approved: var(--status-approved);
   --color-status-rejected: var(--status-rejected);

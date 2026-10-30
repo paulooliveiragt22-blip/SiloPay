@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/presentation/components/theme-provider";
+import { AppToaster } from "@/presentation/components/toaster";
 import "./globals.css";
 
 const handelGothic = localFont({
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={handelGothic.variable}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <AppToaster />
+        </ThemeProvider>
       </body>
     </html>
   );

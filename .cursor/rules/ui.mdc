@@ -15,3 +15,7 @@ Diálogo, select, dropdown, switch, tabs e tooltip saem do Radix (via shadcn). W
 Cor de saldo, erro e sucesso usa token (`primary`, `destructive`, `muted`). Sem hex solto e sem largura mágica (`w-[324px]`). Texto longo trunca. Lista tem skeleton.
 
 Componente interativo não é `div` sem role, `tabIndex` e teclado. O componente estende os atributos nativos do elemento e exporta `VariantProps`.
+
+Primitivos ficam em `src/presentation/components/ui` (`button`, `dialog`, `card`, `input`, `field`, `table`). Não criar `src/components` nem `components/ui` na raiz.
+
+Cadastro novo entra por chip (`Chip` ou `ChipLink`: `Button` outline, `size="sm"`, `rounded-full`, ícone de mais) e abre `Dialog`. Ver um cadastro abre o mesmo `Dialog` em card (`DialogHeader`, `DialogTitle`, `DialogDescription`). A lista não é a ficha. Formulário dentro do diálogo usa `Field`, `Label`, `Input` e `Button`. Status de dinheiro continua em `ExpenseStatus`.

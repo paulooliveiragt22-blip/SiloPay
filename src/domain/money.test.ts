@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { decideReview, parsePositiveCents, parseReaisToCents } from "./money";
+import { decideReview, parseApprovedReais, parsePositiveCents, parseReaisToCents } from "./money";
 
 test("centavos positivos aceitam inteiro maior que zero", () => {
   const parsed = parsePositiveCents(1500);
@@ -8,10 +8,20 @@ test("centavos positivos aceitam inteiro maior que zero", () => {
   if (parsed.ok) assert.equal(parsed.value, 1500);
 });
 
-test("reais com ate duas casas viram centavos", () => {
+test("reais brasileiros viram centavos", () => {
   assert.deepEqual(parseReaisToCents("10,50"), { ok: true, value: 1050 });
-  assert.deepEqual(parseReaisToCents("10.5"), { ok: true, value: 1050 });
-  assert.deepEqual(parseReaisToCents("10.505"), { ok: false, error: "centavos_invalidos" });
+  assert.deepEqual(parseReaisToCents("10,5"), { ok: true, value: 1050 });
+  assert.deepEqual(parseReaisToCents("1.234,56"), { ok: true, value: 123456 });
+  assert.deepEqual(parseReaisToCents("R$ 1.234,56"), { ok: true, value: 123456 });
+  assert.deepEqual(parseReaisToCents("10.50"), { ok: false, error: "centavos_invalidos" });
+  assert.deepEqual(parseReaisToCents("10,505"), { ok: false, error: "centavos_invalidos" });
+  assert.deepEqual(parseReaisToCents("0"), { ok: false, error: "valor_nao_positivo" });
+});
+
+test("baixa aceita zero para recusar", () => {
+  assert.deepEqual(parseApprovedReais("0"), { ok: true, value: 0 });
+  assert.deepEqual(parseApprovedReais("0,00"), { ok: true, value: 0 });
+  assert.deepEqual(parseApprovedReais("12,5"), { ok: true, value: 1250 });
 });
 
 test("centavos rejeitam fracao, texto e zero", () => {

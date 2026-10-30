@@ -29,13 +29,13 @@ O saldo não é recalculado em TypeScript nem em Dart. A view entrega `transferi
 
 O papel sai de `gestor_current_membership()`, não de cookie. Cada Server Action chama `verifySession()` de novo. Papel errado usa `forbidden()` de `next/navigation`.
 
-Cliente da sessão nas páginas e nas actions. `createBrowserClient` só no login e no upload da foto. `SUPABASE_SECRET_KEY` só no webhook do gateway. `payment_accounts` não é lida pelo cliente.
+Cliente da sessão nas páginas e nas actions. `createBrowserClient` só no login e no upload da foto. `SUPABASE_SECRET_KEY` fica no servidor: webhook do gateway e o módulo que cria ou troca a senha do colaborador. Não entra no navegador. `payment_accounts` não é lida pelo cliente.
 
 ### Gateway
 
 O nome do provedor é a coluna `provider`. Tabela, coluna de domínio, enum e rota não citam um gateway. O adaptador em `src/data/payments/<provider>/` traduz o evento. A action não faz HTTP. Falha e cancelamento não geram lançamento. Id externo é `text`.
 
-O adiantamento de teste (`registrar_adiantamento_teste`) existe para a baixa ter saldo. Sai quando o webhook confirmar a transferência.
+O saldo da empresa é a soma de `company_cash_entries`. A entrada é manual. O envio ao colaborador debita esse saldo na mesma RPC que credita a subconta. `registrar_adiantamento_teste` está aposentada.
 
 ### Tema
 
@@ -57,13 +57,13 @@ As views geradas marcam colunas como anuláveis. Quem lê em `src/data` é que d
 
 ## Ordem do código que ainda falta
 
-1. App Next: proxy, clientes Supabase, `reads` / `mutations`, login, layout por papel, `/admin` e `/campo` lendo as views. A baixa chama `reviewReceipt`. O funcionário envia comprovante em `/campo/comprovantes/novo`.
-2. Flutter, com o mesmo contrato SQL. Não importa `src/domain`.
-3. Primeiro adaptador de gateway, em sandbox. Até lá não há webhook nem ordem pendente real.
-4. Cadastro de funcionário em `/admin/funcionarios/novo` e a tela `/admin/funcionarios/[id]`. As RPCs `cadastrar_funcionario` e `vincular_funcionario` já existem.
+1. App Next: proxy, clientes Supabase, `reads` / `mutations`, login, layout por papel, `/admin` e `/campo` lendo as views. A baixa chama `reviewReceipt`. O funcionário envia comprovante no modal de `/campo?enviar=1`.
+2. Flutter (Android e iOS), só depois deste app Next fechado. O contrato continua o SQL. O Flutter não importa `src/domain`.
+3. Gateway real fica fora deste ciclo. O saldo da empresa entra em `/admin/pagamentos` por `adicionar_saldo_empresa`. O envio na ficha chama `enviar_saldo_colaborador`.
+4. Devolução da sobra na ficha, por `devolver_sobra`. O login do colaborador nasce no cadastro: `cadastrar_funcionario_com_acesso` liga o usuário já criado como colaborador. A senha temporária vale 24 horas e `confirmar_senha_inicial` libera o uso. `vincular_funcionario_por_email` saiu do app.
 
 ## Consequências
 
 - Um usuário pertence a uma empresa. Não há cookie de workspace.
-- A service role não entra em página nem em action de usuário.
+- A service role não vai para o navegador. No servidor, ela só cria ou troca a senha do colaborador e atende o webhook.
 - Mudança de saldo, papel ou gateway que não esteja em `docs/business_rules.md` para e pergunta. Não entra default de mercado.

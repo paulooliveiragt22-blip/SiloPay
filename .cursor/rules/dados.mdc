@@ -1,17 +1,17 @@
 ---
-description: Leitura em view, mutação em RPC, sessão do usuário. Service role só no webhook.
+description: Leitura em view, mutação em RPC, sessão do usuário. Service role só no webhook e na senha do colaborador.
 alwaysApply: true
 ---
 
 # Dados
 
-Leitura: só `v_minha_subconta`, `v_meu_extrato`, `v_fila_comprovantes`, `v_subconta_funcionario`.
+Leitura: só `v_minha_subconta`, `v_meu_extrato`, `v_fila_comprovantes`, `v_comprovantes`, `v_subconta_funcionario`, `v_minha_empresa`, `v_extrato_funcionario`, `v_saldo_empresa`, `v_extrato_empresa`, `v_conta_pagamento`, `v_destino_pix`, `v_meu_acesso`.
 
-Mutação: só RPC (`criar_empresa`, `cadastrar_funcionario`, `vincular_funcionario`, `submit_receipt`, `review_receipt`, e as de Pix quando existirem). Sem `.from('companies').insert` e sem update em `ledger_entries`.
+Mutação: só RPC (`criar_empresa`, `cadastrar_funcionario_com_acesso`, `abrir_acesso_colaborador`, `renovar_senha_colaborador`, `confirmar_senha_inicial`, `encerrar_acesso_vencido`, `submit_receipt`, `corrigir_comprovante`, `excluir_comprovante`, `review_receipt`, `adicionar_saldo_empresa`, `enviar_saldo_colaborador`, `devolver_sobra`). `cadastrar_funcionario`, `vincular_funcionario` e `vincular_funcionario_por_email` não entram no app. `registrar_adiantamento_teste` está aposentada. Sem `.from('companies').insert` e sem update em `ledger_entries` nem em `company_cash_entries`.
 
 Cliente da sessão (`createServerClient` / `createBrowserClient`) nas páginas e actions. `createBrowserClient` só no login e no upload da foto.
 
-A chave secreta do Supabase existe só no webhook do gateway. `payment_accounts` não tem grant para `authenticated` nem `anon`. A chave de API e o segredo do webhook saem cifrados, só no adaptador.
+A chave secreta do Supabase fica no servidor: webhook do gateway e o módulo que cria ou troca a senha do colaborador. Não entra no navegador. `payment_accounts` não tem grant para `authenticated` nem `anon`. A chave de API e o segredo do webhook saem cifrados, só no adaptador. `acesso_colaborador` não tem grant para `authenticated` nem `anon`.
 
 `company_id` e `employee_id` de permissão vêm do vínculo no banco. Corpo de formulário não prova papel.
 

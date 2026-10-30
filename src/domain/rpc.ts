@@ -14,6 +14,18 @@ export type ReviewReceiptResult = {
   amountApprovedCents: number;
 };
 export type AdiantamentoTesteResult = { paymentOrderId: string; idempotent: boolean };
+export type PaymentOrderStatus = "pendente" | "confirmada" | "falhou" | "cancelada";
+export type AbrirOrdemResult = {
+  paymentOrderId: string;
+  status: PaymentOrderStatus;
+  idempotent: boolean;
+};
+export type ContaPagamentoResult = {
+  companyId: string;
+  provider: string;
+  environment: "sandbox" | "producao";
+  status: string;
+};
 
 export function parseUuid(value: unknown): Result<string> {
   if (typeof value !== "string" || !UUID.test(value)) return err("recibo_invalido");
@@ -67,6 +79,49 @@ export function parseAdiantamentoTeste(value: unknown): Result<AdiantamentoTeste
   return ok({ paymentOrderId, idempotent: row.idempotent });
 }
 
+export function parseAbrirOrdem(value: unknown): Result<AbrirOrdemResult> {
+  const row = record(value);
+  const paymentOrderId = row ? uuid(row.payment_order_id) : null;
+  const status = row ? paymentStatus(row.status) : null;
+  if (!paymentOrderId || !status || typeof row?.idempotent !== "boolean") return err("retorno_rpc_invalido");
+  return ok({ paymentOrderId, status, idempotent: row.idempotent });
+}
+
+export type AdicionarSaldoResult = { idempotent: boolean };
+export type EnviarSaldoResult = { paymentOrderId: string; idempotent: boolean };
+
+export function parseAdicionarSaldo(value: unknown): Result<AdicionarSaldoResult> {
+  const row = record(value);
+  const companyId = row ? uuid(row.company_id) : null;
+  if (!companyId || typeof row?.idempotent !== "boolean") return err("retorno_rpc_invalido");
+  return ok({ idempotent: row.idempotent });
+}
+
+export function parseDevolverSobra(value: unknown): Result<{ returnChargeId: string; idempotent: boolean }> {
+  const row = record(value);
+  const returnChargeId = row ? uuid(row.return_charge_id) : null;
+  if (!returnChargeId || typeof row?.idempotent !== "boolean") return err("retorno_rpc_invalido");
+  return ok({ returnChargeId, idempotent: row.idempotent });
+}
+
+export function parseEnviarSaldo(value: unknown): Result<EnviarSaldoResult> {
+  const row = record(value);
+  const paymentOrderId = row ? uuid(row.payment_order_id) : null;
+  if (!paymentOrderId || row?.status !== "confirmada" || typeof row?.idempotent !== "boolean") {
+    return err("retorno_rpc_invalido");
+  }
+  return ok({ paymentOrderId, idempotent: row.idempotent });
+}
+
+export function parseContaPagamento(value: unknown): Result<ContaPagamentoResult> {
+  const row = record(value);
+  const companyId = row ? uuid(row.company_id) : null;
+  const provider = typeof row?.provider === "string" ? row.provider : null;
+  const environment = row?.environment === "sandbox" || row?.environment === "producao" ? row.environment : null;
+  if (!companyId || !provider || !environment || row?.status !== "conectada") return err("retorno_rpc_invalido");
+  return ok({ companyId, provider, environment, status: "conectada" });
+}
+
 function record(value: unknown): Record<string, unknown> | null {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
   return value as Record<string, unknown>;
@@ -78,6 +133,11 @@ function uuid(value: unknown): string | null {
 
 function reviewStatus(value: unknown): ReviewStatus | null {
   if (value === "aprovado" || value === "parcial" || value === "recusado") return value;
+  return null;
+}
+
+function paymentStatus(value: unknown): PaymentOrderStatus | null {
+  if (value === "pendente" || value === "confirmada" || value === "falhou" || value === "cancelada") return value;
   return null;
 }
 

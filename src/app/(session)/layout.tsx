@@ -1,11 +1,18 @@
 import type { ReactNode } from "react";
+import { AdminShell } from "@/presentation/components/admin-shell";
 import { SignOutButton } from "@/presentation/components/sign-out-button";
 import { Wordmark } from "@/presentation/components/wordmark";
 import { verifySession } from "@/presentation/session";
+import { readMinhaEmpresa } from "@/data/supabase/reads";
 
 export default async function SessionLayout({ children }: { children: ReactNode }) {
   const session = await verifySession();
   const role = session.membership?.role;
+
+  if (role === "admin") {
+    const companyName = (await readMinhaEmpresa()) ?? "Empresa";
+    return <AdminShell companyName={companyName}>{children}</AdminShell>;
+  }
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -13,24 +20,9 @@ export default async function SessionLayout({ children }: { children: ReactNode 
         <a href="/" className="text-lg text-foreground">
           <Wordmark />
         </a>
-        {role === "admin" ? (
-          <a href="/admin" className="text-sm text-accent">
-            Funcionários
-          </a>
-        ) : null}
-        {role === "admin" ? (
-          <a href="/admin/comprovantes" className="text-sm text-accent">
-            Fila
-          </a>
-        ) : null}
         {role === "funcionario" ? (
-          <a href="/campo" className="text-sm text-accent">
+          <a href="/campo" className="text-sm font-medium text-foreground">
             Subconta
-          </a>
-        ) : null}
-        {role === "funcionario" ? (
-          <a href="/campo/comprovantes/novo" className="text-sm text-accent">
-            Comprovante
           </a>
         ) : null}
         <div className="ml-auto">

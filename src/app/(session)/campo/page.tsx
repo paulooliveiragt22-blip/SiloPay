@@ -1,52 +1,50 @@
+import { forbidden } from "next/navigation";
 import { readExtrato, readMinhaSubconta } from "@/data/supabase/reads";
-import {
-  ExpenseStatus,
-  expenseRowClass,
-  labelOfExtrato,
-  toneOfExtrato,
-} from "@/presentation/components/expense-status";
-import { formatCents } from "@/presentation/format";
+import { ExtratoList } from "@/presentation/components/extrato-list";
+import { ReceiptCreateDialog } from "@/presentation/components/receipt-create-dialog";
 import { PageStack, SaldoGrid } from "@/presentation/components/saldo";
+import { verifySession } from "@/presentation/session";
+import { ChipLink } from "@/presentation/components/ui/chip";
 
 export const dynamic = "force-dynamic";
 
-export default async function CampoPage() {
+function first(value: string | string[] | undefined) {
+  return typeof value === "string" ? value : null;
+}
+
+export default async function CampoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ enviar?: string | string[] }>;
+}) {
+  const query = await searchParams;
+  const session = await verifySession();
+  const membership = session.membership;
+  if (membership?.role !== "funcionario" || !membership.employeeId) forbidden();
+
   const [saldo, extrato] = await Promise.all([readMinhaSubconta(), readExtrato()]);
 
   return (
-    <PageStack title="Minha subconta">
-      <a href="/campo/comprovantes/novo" className="text-sm text-accent">
-        Enviar comprovante
-      </a>
+    <PageStack
+      title="Minha subconta"
+      action={<ChipLink href="/campo?enviar=1">Enviar comprovante</ChipLink>}
+    >
+      <ReceiptCreateDialog
+        open={first(query.enviar) === "1"}
+        companyId={membership.companyId}
+        employeeId={membership.employeeId}
+      />
       {saldo ? (
         <SaldoGrid saldo={saldo} />
       ) : (
         <p className="text-sm text-muted-foreground">Ainda não há lançamento nesta subconta.</p>
       )}
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg">Extrato</h2>
-        {extrato.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhum comprovante ou Pix nesta subconta.</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {extrato.map((item) => {
-              const tone = toneOfExtrato(item);
-              return (
-                <li key={item.id} className={expenseRowClass(tone, "flex items-center justify-between gap-3 px-4 py-3")}>
-                  <div className="flex min-w-0 flex-col gap-1">
-                    <ExpenseStatus tone={tone}>{labelOfExtrato(item)}</ExpenseStatus>
-                    <p className="truncate text-sm text-muted-foreground">
-                      {new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(
-                        new Date(item.occurredAt),
-                      )}
-                    </p>
-                  </div>
-                  <p className="shrink-0 text-sm">{formatCents(item.amountCents)}</p>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        <h2 className="text-lg font-semibold text-foreground">Extrato</h2>
+        <ExtratoList
+          items={extrato}
+          draft={{ companyId: membership.companyId, employeeId: membership.employeeId }}
+        />
       </section>
     </PageStack>
   );

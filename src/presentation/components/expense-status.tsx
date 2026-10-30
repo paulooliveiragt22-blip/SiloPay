@@ -72,7 +72,8 @@ export function labelOfExtrato(item: {
     if (item.receiptStatus === "recusado") return "Recusado";
     return "Comprovante";
   }
-  if (item.kind === "adiantamento" || item.kind === "reembolso") return "Pix enviado";
+  if (item.kind === "adiantamento") return "Adiantamento";
+  if (item.kind === "reembolso") return "Reembolso";
   if (item.kind === "baixa") return "Baixa";
   if (item.kind === "devolucao") return "Devolução";
   return item.kind;

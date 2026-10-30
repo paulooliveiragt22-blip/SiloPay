@@ -8,6 +8,7 @@ export async function createClient() {
   const { url, publishableKey } = publicEnv();
 
   return createServerClient<Database>(url, publishableKey, {
+    global: { fetch: fetchWithRetry },
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -23,4 +24,19 @@ export async function createClient() {
       },
     },
   });
+}
+
+async function fetchWithRetry(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(input, init);
+  } catch (error: unknown) {
+    if (init?.signal?.aborted || !isTransientFetchError(error)) throw error;
+    return await fetch(input, init);
+  }
+}
+
+function isTransientFetchError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : "";
+  const cause = error instanceof Error && error.cause instanceof Error ? error.cause.message : "";
+  return /fetch failed|timeout|econnreset|socket|other side closed/i.test(`${message} ${cause}`);
 }

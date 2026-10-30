@@ -6,11 +6,16 @@ declare const centsBrand: unique symbol;
 export type Cents = number & { readonly [centsBrand]: true };
 
 export function parseReaisToCents(raw: unknown): Result<Cents> {
-  if (typeof raw !== "string") return err("centavos_invalidos");
-  const normalized = raw.trim().replace(",", ".");
-  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return err("centavos_invalidos");
-  const [whole, frac = ""] = normalized.split(".");
-  const cents = Number(whole) * 100 + Number(frac.padEnd(2, "0"));
+  const cents = reaisToInteger(raw);
+  if (cents === null) return err("centavos_invalidos");
+  return parsePositiveCents(cents);
+}
+
+/** Valor aceito na baixa. Zero recusa o comprovante e não lança saldo. */
+export function parseApprovedReais(raw: unknown): Result<Cents> {
+  const cents = reaisToInteger(raw);
+  if (cents === null) return err("centavos_invalidos");
+  if (cents === 0) return ok(0 as Cents);
   return parsePositiveCents(cents);
 }
 
@@ -41,6 +46,17 @@ export function decideReview(claimed: Cents, approved: unknown): Result<ReviewDe
     return ok({ status: "recusado", approved: accepted, postsLedger: false });
   }
   return ok({ status: "parcial", approved: accepted, postsLedger: true });
+}
+
+function reaisToInteger(raw: unknown): number | null {
+  if (typeof raw !== "string") return null;
+  const text = raw.trim().replace(/\s/g, "").replace(/^R\$/, "");
+  if (!/^(\d{1,3}(\.\d{3})*|\d+)(,\d{1,2})?$/.test(text)) return null;
+  const [whole, frac = ""] = text.split(",");
+  const digits = whole.replaceAll(".", "");
+  const cents = Number(digits) * 100 + Number(frac.padEnd(2, "0"));
+  if (!Number.isSafeInteger(cents)) return null;
+  return cents;
 }
 
 function isIntegerCents(value: unknown): value is number {

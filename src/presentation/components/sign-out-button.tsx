@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createBrowserSupabase } from "@/data/supabase/browser";
+import { Button } from "./ui/button";
 
 export function SignOutButton() {
   const router = useRouter();
@@ -17,8 +18,8 @@ export function SignOutButton() {
   }
 
   return (
-    <button type="button" onClick={signOut} disabled={pending} className="text-sm text-muted-foreground">
+    <Button type="button" variant="ghost" size="sm" onClick={signOut} disabled={pending}>
       {pending ? "Saindo…" : "Sair"}
-    </button>
+    </Button>
   );
 }

@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBrowserSupabase } from "@/data/supabase/browser";
+import { Button } from "./ui/button";
+import { Field, FieldGroup } from "./ui/field";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 export function LoginForm() {
   const router = useRouter();
@@ -26,35 +30,25 @@ export function LoginForm() {
   }
 
   return (
-    <form action={onSubmit} className="flex w-full max-w-sm flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm">
-        E-mail
-        <input
-          name="email"
-          type="email"
-          autoComplete="username"
-          required
-          className="h-9 rounded-md border border-input bg-card px-3"
-        />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Senha
-        <input
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          className="h-9 rounded-md border border-input bg-card px-3"
-        />
-      </label>
-      <button
-        type="submit"
-        disabled={pending}
-        className="h-9 rounded-md bg-primary px-3 text-sm text-primary-foreground disabled:opacity-50"
-      >
-        {pending ? "Entrando…" : "Entrar"}
-      </button>
-      {message ? <p className="text-sm text-destructive">{message}</p> : null}
+    <form action={onSubmit}>
+      <FieldGroup>
+        <Field>
+          <Label htmlFor="login-email">E-mail</Label>
+          <Input id="login-email" name="email" type="email" autoComplete="username" required />
+        </Field>
+        <Field>
+          <Label htmlFor="login-password">Senha</Label>
+          <Input id="login-password" name="password" type="password" autoComplete="current-password" required />
+        </Field>
+        <Button type="submit" disabled={pending}>
+          {pending ? "Entrando…" : "Entrar"}
+        </Button>
+        {message ? (
+          <p className="text-sm text-destructive" role="alert">
+            {message}
+          </p>
+        ) : null}
+      </FieldGroup>
     </form>
   );
 }

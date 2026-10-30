@@ -91,7 +91,7 @@ Variáveis:
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Cliente e servidor |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Cliente e servidor. É a chave pública (no painel antigo, anon) |
-| `SUPABASE_SECRET_KEY` | Só o webhook. Sem prefixo `NEXT_PUBLIC_` |
+| `SUPABASE_SECRET_KEY` | Só o servidor: webhook e senha do colaborador. Sem prefixo `NEXT_PUBLIC_` |
 | `PAYMENT_KEYS_ENCRYPTION_KEY` | Só o servidor. Cifra a chave de API e o segredo de webhook de cada empresa |
 
 A chave de cada empresa não vai para variável de ambiente do projeto. Fica cifrada em `payment_accounts` e só o adaptador daquele `provider` decifra.
@@ -104,19 +104,18 @@ O papel não mora num cookie. O proxy só sabe se há sessão. O layout `(sessio
 
 A página lê view com o cliente da sessão, então a RLS vale:
 
-- funcionário: `v_minha_subconta`, `v_meu_extrato`
-- admin: `v_fila_comprovantes`, `v_subconta_funcionario`
+- funcionário: `v_minha_subconta`, `v_meu_extrato`, `v_meu_acesso`
+- admin: `v_fila_comprovantes`, `v_comprovantes`, `v_subconta_funcionario`, `v_minha_empresa`, `v_extrato_funcionario`, `v_saldo_empresa`, `v_extrato_empresa`
 
 A action de comprovante e a de baixa chamam a RPC com o mesmo cliente da sessão. O Postgres recusa o que o papel não pode. O Next.js recusa antes, para a tela não depender só do erro do banco.
 
-Pedido de Pix:
+Envio ao colaborador, neste ciclo, sem gateway:
 
-1. A action confere admin e valida valor e funcionário da mesma empresa.
-2. A RPC abre a ordem pendente.
-3. O adaptador em `data/payments/<provider>` envia o Pix com a referência igual ao id da ordem. O caso de uso pede isso pela porta. A action não chama o HTTP do gateway.
-4. O saldo só muda quando o webhook daquele gateway confirma a transferência.
-
-O webhook é o único uso da chave secreta do Supabase. Ele grava o lançamento de forma idempotente por `provider_transfer_id`. Falha e cancelamento não geram lançamento.
+1. A action confere admin e valida valor, tipo e funcionário.
+2. `adicionar_saldo_empresa` lança a entrada manual.
+3. `enviar_saldo_colaborador` recusa se o saldo da empresa não cobre. Se cobre, debita a empresa e credita a subconta na mesma transação.
+4. `devolver_sobra` recusa se passar do saldo da subconta. Se cabe, debita a subconta e credita a empresa na mesma transação.
+5. A baixa não devolve valor à empresa.
 
 Foto: bucket privado. O navegador sobe o arquivo pela política do Storage, na pasta da própria empresa e do próprio usuário. A action recebe o caminho, não o binário. A empresa vê a imagem por URL assinada, curta, gerada no servidor.
 
@@ -141,18 +140,19 @@ Grupos `(public)` e `(session)` não aparecem na URL.
 | URL | Papel | Função |
 |---|---|---|
 | `/login` | público | Entrar |
-| `/admin` | admin | Funcionários e saldo de cada subconta |
-| `/admin/funcionarios/novo` | admin | Cadastro e chave Pix |
-| `/admin/funcionarios/[id]` | admin | Extrato, transferir, reembolsar, pedir devolução |
+| `/admin` | admin | Resumo e fila de comprovantes |
+| `/admin/colaboradores` | admin | Lista. Novo e ver abrem card modal (`?cadastro=novo`, `?id=`) |
+| `/admin/funcionarios/novo` | admin | Redireciona para o modal de cadastro |
+| `/admin/funcionarios/[id]` | admin | Redireciona para o modal da subconta |
 | `/admin/comprovantes` | admin | Fila |
 | `/admin/comprovantes/[id]` | admin | Foto, valor informado, valor aceito |
-| `/admin/pagamentos` | admin | Conectar a conta no gateway, sandbox primeiro |
+| `/admin/pagamentos` | admin | Saldo da empresa e entrada manual (`?adicionar=1`) |
 | `/campo` | funcionário | Transferido, em análise, baixado, saldo |
-| `/campo/comprovantes/novo` | funcionário | Foto, valor, categoria |
+| `/campo/comprovantes/novo` | funcionário | Redireciona para o modal em `/campo?enviar=1` |
 | `/campo/comprovantes` | funcionário | Estado de cada comprovante |
 | `/api/payments/[provider]/webhook` | gateway | Confirmação de Pix e de devolução |
 
-No navegador largo, a fila fica ao lado da foto. No estreito, empilha. Componente cliente só no preview da foto e no formulário. O resto é Server Component.
+A fila abre a foto e a baixa num card modal. Cadastro novo entra por botão chip e abre outro card modal. Componente cliente no diálogo, no preview da foto e no formulário. O resto é Server Component.
 
 ## Tema
 
